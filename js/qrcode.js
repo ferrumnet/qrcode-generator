@@ -554,7 +554,7 @@ var qrcode = function() {
       return qrSvg;
     };
 
-    _this.createDataURL = function(cellSize, margin) {
+    _this.createDataURL = function(cellSize, margin, bkgRgb, fgRgb) {
 
       cellSize = cellSize || 2;
       margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
@@ -571,7 +571,7 @@ var qrcode = function() {
         } else {
           return 1;
         }
-      } );
+      }, bkgRgb, fgRgb );
     };
 
     _this.createImgTag = function(cellSize, margin, alt) {
@@ -2009,8 +2009,8 @@ var qrcode = function() {
   // gifImage (B/W)
   //---------------------------------------------------------------------
 
-  var gifImage = function(width, height) {
-
+  var gifImage = function(width, height, bkgRgb, fgRgb) {
+    console.log('called with ', width, height, bkgRgb, fgRgb)
     var _width = width;
     var _height = height;
     var _data = new Array(width * height);
@@ -2042,14 +2042,14 @@ var qrcode = function() {
       // Global Color Map
 
       // black
-      out.writeByte(0x00);
-      out.writeByte(0x00);
-      out.writeByte(0x00);
+      out.writeByte(fgRgb ? fgRgb[0] : 0x00);
+      out.writeByte(fgRgb ? fgRgb[1] : 0xFF);
+      out.writeByte(fgRgb ? fgRgb[2] : 0x00);
 
       // white
-      out.writeByte(0xff);
-      out.writeByte(0xff);
-      out.writeByte(0xff);
+      out.writeByte(bkgRgb ? bkgRgb[0] : 0xff);
+      out.writeByte(bkgRgb ? bkgRgb[0] : 0xff);
+      out.writeByte(bkgRgb ? bkgRgb[0] : 0xff);
 
       //---------------------------------
       // Image Descriptor
@@ -2219,8 +2219,8 @@ var qrcode = function() {
     return _this;
   };
 
-  var createDataURL = function(width, height, getPixel) {
-    var gif = gifImage(width, height);
+  var createDataURL = function(width, height, getPixel, bkgRgb, fgRgb) {
+    var gif = gifImage(width, height, bkgRgb, fgRgb);
     for (var y = 0; y < height; y += 1) {
       for (var x = 0; x < width; x += 1) {
         gif.setPixel(x, y, getPixel(x, y) );
@@ -2295,3 +2295,4 @@ var qrcode = function() {
 }(function () {
     return qrcode;
 }));
+
